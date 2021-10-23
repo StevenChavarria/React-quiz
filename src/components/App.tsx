@@ -1,29 +1,64 @@
-import React from 'react';
-import { Plants, PLANTS_DATA } from '../data';
-import { Plant } from './Plant'
+import React, { useState } from 'react';
+import { PLANTS_DATA } from '../data';
+import { Plant } from './Plant';
 
-interface AppState {
-	list: Plants[];
-	id: number;
-  quantity: number;
-}
+function App() {
+  const [plants, setPlants] = useState(PLANTS_DATA);
+  const [currentId, setCurrentId] = useState(0);
 
-
-export class App extends React.Component<{}, AppState>{
-  state:AppState = {
-    list: PLANTS_DATA,
-    id: 1,
-    quantity: 1
-	};
-
-     handlePlant = (id:number, quantity:number) => this.setState({id:id, quantity:quantity});
-
-
-  render() {
-    return <>
-      {PLANTS_DATA.map((plant) => <Plant handleClick={(id:number, quantity:number) => this.handlePlant(plant.id, plant.quantity)} key={plant.id} id={plant.id} title={plant.title} description={plant.description} imgURL={plant.imgURL} quantity={plant.quantity} />)}
-    </>
+  const addPlant = () => {
+    setPlants((previous: any) => {
+      return previous.map((plant: any) => {
+        if (plant.id === currentId) {
+          return { ...plant, quantity: plant.quantity + 1 }
+        }
+        return plant;
+      });
+    });
   }
+
+  const removePlant = () => {
+    setPlants((previous: any) => {
+      return previous.map((plant: any) => {
+        if (plant.id === currentId) {
+          return { ...plant, quantity: plant.quantity - 1 }
+        }
+        return plant;
+      });
+    });
+  }
+
+  const setPlant = (id: number) => {
+    setCurrentId(id);
+  }
+
+  const quantityValidation = () => {
+    let cont = 0;
+    let flag = false;
+    plants.map((plant) =>
+      (plant.quantity > 0 ? flag = false : cont = cont + 1)
+    )
+    plants.length !== cont ? flag = true : flag = false
+    return flag;
+  }
+
+  return (
+    <div>
+      {plants.length > 0 ?
+        [(quantityValidation() ?
+          plants.map((plant) =>
+            <div key={plant.id} onClick={() => setPlant(plant.id!)}>
+              <Plant id={plant.id} title={plant.title} description={plant.description} imgURL={plant.imgURL} quantity={plant.quantity} addPlant={addPlant} removePlant={removePlant} />
+            </div>)
+          : <PlantsAvalaibility key={plants.length} />)] : null}
+    </div>
+  );
 }
 
+const PlantsAvalaibility: React.FC = () => {
+  
+  return <div>
+    <h1>No plants avalaible</h1>
+  </div>
+}
 export default App;

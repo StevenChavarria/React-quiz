@@ -54,3 +54,8 @@ button{
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+h3 {
+  margin: 20px;
+  text-align: center;
+}
